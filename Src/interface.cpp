@@ -9,7 +9,31 @@
 #include <linux/can/raw.h>
 
 
+
+
+#include <iostream>
+
+
 #include "../Inc/interface.hpp"
+
+
+
+
+int8_t PUTM_CAN::CAN::transmit(Device &device)
+{
+    struct can_frame frame;
+    frame.can_id = device.can_id;
+    frame.can_dlc = device.can_dlc;
+
+    const void* data_position = &(reinterpret_cast<uint8_t*>(&device))[sizeof(Device)];
+
+    std::memcpy(frame.data, data_position, device.can_dlc);
+
+    return write(private_socket, &frame, sizeof(struct can_frame));
+}
+
+
+
 
 
 int8_t PUTM_CAN::CAN::connect(const char *ifname)
