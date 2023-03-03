@@ -24,7 +24,7 @@ namespace PUTM_CAN
 
     public:
         CAN() = default;
-        int8_t connect(const char *ifname = "slcan0");
+        int8_t connect(const char *ifname = "slcan0\n");
         int8_t disconnect();
 
         int8_t bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
