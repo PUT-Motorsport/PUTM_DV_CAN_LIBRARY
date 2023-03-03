@@ -15,14 +15,13 @@
 #include <linux/can/raw.h>
 #include <iostream>
 
-
 namespace PUTM_CAN
 {
     class CAN
     {
     private:
         int private_socket;
-    
+
     public:
         CAN() = default;
         int8_t connect(const char *ifname = "slcan0");
@@ -32,9 +31,9 @@ namespace PUTM_CAN
         int8_t bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
         int8_t bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
 
-
         template <typename T>
-        int8_t transmit(T const &tx_frame){
+        int8_t transmit(T const &tx_frame)
+        {
             struct can_frame frame;
             frame.can_id = can_id<T>;
             frame.can_dlc = sizeof(T);
@@ -46,15 +45,28 @@ namespace PUTM_CAN
             return 0;
         }
 
-
         template <typename T>
-        int8_t receive(T const &rx_frame);
-
-
+        int8_t receive(T &rx_frame)
+        {
+            struct can_frame frame;
+            struct can_filter filter
+            {
+                .can_id = can_id<T>, .can_mask = CAN_SFF_MASK
+            };
+            if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
+            {
+                return -1;
+            }
+            if (read(private_socket, &frame, sizeof(struct can_frame)) < sizeof(can_frame))
+            {
+                return -2;
+            }
+            std::memcpy(&rx_frame, frame.data, sizeof(T));
+            return 0;
+        }
 
         template <typename T>
         int8_t receive_rtr(T const &rx_frame);
-
     };
 }
 
