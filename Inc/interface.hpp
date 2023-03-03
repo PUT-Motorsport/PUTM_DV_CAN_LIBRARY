@@ -18,32 +18,118 @@
 #include "CanHeaders/PM08-CANBUS-WHEELTEMP.hpp"
 #include "CanHeaders/PM08-CANBUS-YAWPROBE.hpp"
 
-struct __attribute__ ((packed)) Device{
-    Device(uint16_t can_id, uint16_t can_dlc) : can_id(can_id), can_dlc(can_dlc) {}
-    const uint16_t can_id;
-    const uint16_t can_dlc;
-};
-struct __attribute__ ((packed)) Our_device : Device {
-    Our_device() : Device(0x87, sizeof(Our_device)-sizeof(Device)){}
-    int16_t speed_x; // rotary speed x
-    int16_t speed_y; // rotary speed y
-    int16_t speed_z; // rSotary speed z
-};
-
-
 namespace PUTM_CAN
 {
+    constexpr uint16_t INVALID_CAN_ID = 0xFFFF;
+
+    template <typename T>
+    constexpr uint16_t can_id = INVALID_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<Apps_main> = APPS_MAIN_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<AQ_main> = AQ_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<AQ_acceleration> = AQ_ACCELERATION_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<AQ_gyroscope> = AQ_GYROSCOPE_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<AQ_ts_button> = AQ_TS_BUTTON_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<BMS_HV_main> = BMS_HV_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<BMS_LV_main> = BMS_LV_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<BMS_LV_temperature> = BMS_LV_TEMPERATURE_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<Dash_Main> = DASH_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Dash_TCS> = DASH_TCS_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Dash_Smart_Fuses_FAN_speed> = DASH_SMART_FUSES_FAN_SPEED_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Dash_steering_wheel_request> = DASH_STEERING_WHEEL_REQUEST_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Dash_lap_finished> = DASH_LAP_FINISHED_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Dash_steering_wheel_angle> = DASH_STEERING_WHEEL_ANGLE_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<DV_Ass> = DV_ASS_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<Lap_timer_Main> = LAP_TIMER_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Lap_timer_Sector> = LAP_TIMER_SECTOR_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Lap_timer_Acc_time> = LAP_TIMER_ACC_TIME_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Lap_timer_Skidpad_time> = LAP_TIMER_SKIDPAD_TIME_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Lap_timer_Lap_time> = LAP_TIMER_LAP_TIME_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<SF_main> = SF_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<SF_PassiveElements> = SF_PASSIVEELEMENTS_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<SF_LegendaryDVAndSupply> = SF_LEGENDARYDVANDSUPPLY_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<SF_Supply> = SF_SUPPLY_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<SF_safety> = SF_SAFETY_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<Steering_Wheel_main> = STEERING_WHEEL_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<Steering_Wheel_event> = STEERING_WHEEL_EVENT_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<SWPS_main> = SWPS_MAIN_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<TC_main> = TC_MAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<TC_rear_suspension> = TC_REAR_SUSPENSION_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<TC_wheel_velocities> = TC_WHEEL_VELOCITIES_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<TC_temperatures> = TC_TEMPERATURES_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<TC_imu_gyro> = TC_IMU_GYRO_CAN_ID;
+    template <>
+    constexpr uint16_t can_id<TC_imu_acc> = TC_IMU_ACC_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<Telemetry_Main> = TELEMETRY_MAIN_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<WheelTemp_main> = WHEELTEMP_MAIN_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id<YawProbe_air_flow> = YAWPROBE_AIR_FLOW_CAN_ID;
+
     class CAN
-    {S
+    {
     public:
         CAN() = default;
         int8_t connect(const char *ifname = "slcan0");
-        int8_t transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
-        int8_t transmit(Device &dev);
-
-        int8_t receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
-        int8_t receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
         int8_t disconnect();
+
+        template <typename T>
+        int8_t transmit();
+        template <typename T>
+        int8_t receive();
+        template <typename T>
+        int8_t receive_rtr();
+
+        int8_t bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
+        int8_t bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+        int8_t bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+
     private:
         int private_socket;
     };

@@ -7,34 +7,9 @@
 #include <string.h>
 #include <cstring>
 #include <linux/can/raw.h>
-
-
-
-
 #include <iostream>
 
-
 #include "../Inc/interface.hpp"
-
-
-
-
-int8_t PUTM_CAN::CAN::transmit(Device &device)
-{
-    struct can_frame frame;
-    frame.can_id = device.can_id;
-    frame.can_dlc = device.can_dlc;
-
-    const void* data_position = &(reinterpret_cast<uint8_t*>(&device))[sizeof(Device)];
-
-    std::memcpy(frame.data, data_position, device.can_dlc);
-
-    return write(private_socket, &frame, sizeof(struct can_frame));
-}
-
-
-
-
 
 int8_t PUTM_CAN::CAN::connect(const char *ifname)
 {
@@ -52,10 +27,21 @@ int8_t PUTM_CAN::CAN::connect(const char *ifname)
     {
         return -2;
     }
+
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
+int8_t PUTM_CAN::CAN::disconnect()
+{
+    if (close(private_socket) < 0)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int8_t PUTM_CAN::CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
 {
     struct can_frame frame;
     frame.can_id = can_id;
@@ -63,46 +49,52 @@ int8_t PUTM_CAN::CAN::transmit(const uint16_t &can_id, const uint8_t &can_dlc, c
 
     std::memcpy(frame.data, tx_data, can_dlc);
 
-    write(private_socket, &frame, sizeof(struct can_frame));
+    if (write(private_socket, &frame, sizeof(struct can_frame)) < 0)
+    {
+        return -1;
+    }
 
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+int8_t PUTM_CAN::CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
 {
     struct can_frame frame;
-    struct can_filter filter{
+    struct can_filter filter
+    {
         .can_id = can_id,
         .can_mask = CAN_SFF_MASK
     };
-    if(setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0){
+
+    if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
+    {
         return -1;
     }
-	
-    if(read(private_socket, &frame, sizeof(struct can_frame)) < 0){
+
+    if (read(private_socket, &frame, sizeof(struct can_frame)) < sizeof(can_frame))
+    {
         return -2;
     }
 
-    // CHECK IF DLC == SIZE
- 
     std::memcpy(rx_data, frame.data, can_dlc);
- 
+
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+int8_t PUTM_CAN::CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
 {
-    struct can_frame frame; 
+    struct can_frame frame;
     frame.can_id = can_id | CAN_RTR_FLAG;
-    write(private_socket, &frame, sizeof(struct can_frame));
-    receive(can_id, can_dlc, rx_data);
-    return 0;
-}
 
-int8_t PUTM_CAN::CAN::disconnect()
-{
-    if (close(private_socket) < 0) {
+    if (write(private_socket, &frame, sizeof(struct can_frame)) < 0)
+    {
         return -1;
     }
+
+    if (bytes_receive(can_id, can_dlc, rx_data) != 0)
+    {
+        return -2;
+    }
+
     return 0;
 }
