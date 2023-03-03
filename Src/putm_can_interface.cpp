@@ -9,7 +9,7 @@
 #include <linux/can/raw.h>
 #include <iostream>
 
-#include "../Inc/interface.hpp"
+#include "../Inc/putm_can_interface.hpp"
 
 int8_t PUTM_CAN::CAN::connect(const char *ifname)
 {

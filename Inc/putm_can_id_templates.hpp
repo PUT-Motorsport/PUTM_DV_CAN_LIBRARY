@@ -1,7 +1,5 @@
-#ifndef INTERFACE
-#define INTERFACE
-
-#include <string>
+#ifndef PUTM_CAN_ID_TEMPLATE
+#define PUTM_CAN_ID_TEMPLATE
 
 #include "CanHeaders/PM08-CANBUS-APPS.hpp"
 #include "CanHeaders/PM08-CANBUS-AQ_CARD.hpp"
@@ -111,28 +109,7 @@ namespace PUTM_CAN
 
     template <>
     constexpr uint16_t can_id<YawProbe_air_flow> = YAWPROBE_AIR_FLOW_CAN_ID;
-
-    class CAN
-    {
-    public:
-        CAN() = default;
-        int8_t connect(const char *ifname = "slcan0");
-        int8_t disconnect();
-
-        template <typename T>
-        int8_t transmit();
-        template <typename T>
-        int8_t receive();
-        template <typename T>
-        int8_t receive_rtr();
-
-        int8_t bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
-        int8_t bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
-        int8_t bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
-
-    private:
-        int private_socket;
-    };
 }
 
-#endif // INTERFACE
+
+#endif //PUTM_CAN_ID_TEMPLATE
