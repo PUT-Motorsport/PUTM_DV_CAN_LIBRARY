@@ -34,13 +34,17 @@ namespace PUTM_CAN
         template <typename T>
         int8_t transmit(T const &tx_frame)
         {
+            if(can_id<T> == INVALID_CAN_ID)
+            {
+                return -1;
+            }
             struct can_frame frame;
             frame.can_id = can_id<T>;
             frame.can_dlc = sizeof(T);
             std::memcpy(frame.data, &tx_frame, sizeof(T));
             if (write(private_socket, &frame, sizeof(struct can_frame)) < 0)
             {
-                return -1;
+                return -2;
             }
             return 0;
         }
@@ -48,6 +52,10 @@ namespace PUTM_CAN
         template <typename T>
         int8_t receive(T &rx_frame)
         {
+            if(can_id<T> == INVALID_CAN_ID)
+            {
+                return -1;
+            }
             struct can_frame frame;
             struct can_filter filter
             {
@@ -55,18 +63,35 @@ namespace PUTM_CAN
             };
             if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
             {
-                return -1;
+                return -2;
             }
             if (read(private_socket, &frame, sizeof(struct can_frame)) < sizeof(can_frame))
             {
-                return -2;
+                return -3;
             }
             std::memcpy(&rx_frame, frame.data, sizeof(T));
             return 0;
         }
 
         template <typename T>
-        int8_t receive_rtr(T const &rx_frame);
+        int8_t receive_rtr(T &rx_frame)
+        {
+            if(can_id<T> == INVALID_CAN_ID)
+            {
+                return -1;
+            }
+            struct can_frame frame;
+            frame.can_id = can_id<T> | CAN_RTR_FLAG;
+            if(write(private_socket, &frame, sizeof(struct can_frame)) < 0)
+            {
+                return -2;
+            }
+            if(receive(rx_frame)!=0)
+            {
+                return -3;
+            }
+            return 0;
+        }
     };
 }
 
