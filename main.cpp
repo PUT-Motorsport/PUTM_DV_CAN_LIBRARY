@@ -7,13 +7,21 @@ int main(int argc, char *argv[]){
     CAN can;
     can.connect();
 
-    char tx_data[8] = {0};
+    AQ_acceleration aq_acceleration;
 
-    std::cout<<(int)can.bytes_receive_rtr(0x0, 3, tx_data);
+    aq_acceleration.acc_x = 1;
+    aq_acceleration.acc_y = 2;
+    aq_acceleration.acc_z = 3;
 
-    std::cout<<(int)tx_data[0];
-    std::cout<<(int)tx_data[1];
-    std::cout<<(int)tx_data[2];
+    can.transmit(aq_acceleration);
+
+    // char tx_data[8] = {0};
+
+    // std::cout<<(int)can.bytes_receive_rtr(0x0, 3, tx_data);
+
+    // std::cout<<(int)tx_data[0];
+    // std::cout<<(int)tx_data[1];
+    // std::cout<<(int)tx_data[2];
 
     return 0;
 }

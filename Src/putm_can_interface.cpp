@@ -11,7 +11,9 @@
 
 #include "../Inc/putm_can_interface.hpp"
 
-int8_t PUTM_CAN::CAN::connect(const char *ifname)
+using namespace PUTM_CAN;
+
+int8_t CAN::connect(const char *ifname)
 {
     struct ifreq ifr;
     struct sockaddr_can addr;
@@ -31,7 +33,7 @@ int8_t PUTM_CAN::CAN::connect(const char *ifname)
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::disconnect()
+int8_t CAN::disconnect()
 {
     if (close(private_socket) < 0)
     {
@@ -41,7 +43,7 @@ int8_t PUTM_CAN::CAN::disconnect()
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
+int8_t CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
 {
     struct can_frame frame;
     frame.can_id = can_id;
@@ -57,7 +59,7 @@ int8_t PUTM_CAN::CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+int8_t CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
 {
     struct can_frame frame;
     struct can_filter filter
@@ -81,7 +83,7 @@ int8_t PUTM_CAN::CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_d
     return 0;
 }
 
-int8_t PUTM_CAN::CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+int8_t CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
 {
     struct can_frame frame;
     frame.can_id = can_id | CAN_RTR_FLAG;
