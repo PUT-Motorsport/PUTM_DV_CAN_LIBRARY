@@ -1,7 +1,7 @@
-## PUTM LINUX CAN LIBRARY
+# PUTM LINUX CAN LIBRARY
 This library allows one to easily communicate with devices connected to the CAN bus.
 
-# How to use
+## How to use
 Create a CAN instance and trigger the connect() method:
 ```cpp
 CAN can;
