@@ -100,3 +100,12 @@ int8_t CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, ch
 
     return 0;
 }
+
+int8_t CAN::structure_receive_random(can_frame &rx_frame)
+{
+    if(read(private_socket, &rx_frame, sizeof(can_frame)) < sizeof(can_frame))
+    {
+        return -1;
+    }
+    return 0;
+}

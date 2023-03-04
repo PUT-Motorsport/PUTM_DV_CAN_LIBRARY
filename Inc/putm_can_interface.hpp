@@ -24,12 +24,14 @@ namespace PUTM_CAN
 
     public:
         CAN() = default;
-        int8_t connect(const char *ifname = "slcan0\n");
+        int8_t connect(const char *ifname = "slcan0");
         int8_t disconnect();
 
         int8_t bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
         int8_t bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
         int8_t bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+
+        int8_t structure_receive_random(can_frame &rx_frame);
 
         template <typename T>
         int8_t transmit(T const &tx_frame)
@@ -93,6 +95,8 @@ namespace PUTM_CAN
             return 0;
         }
     };
+
+    
 }
 
 #endif // PUTM_CAN_INTERFACE
