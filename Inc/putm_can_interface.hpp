@@ -17,6 +17,19 @@
 
 namespace PUTM_CAN
 {
+    enum class CanState
+    {
+        CAN_OK,
+        CAN_SOCKET_ERROR,
+        CAN_BIND_ERROR,
+        CAN_MASKING_ERROR,
+        CAN_ID_ERROR,
+        CAN_WRITE_ERROR,
+        CAN_READ_ERROR,
+        CAN_RECEIVE_ERROR,
+        CAN_CLOSE_ERROR
+    };
+
     class CAN
     {
     private:
@@ -24,23 +37,23 @@ namespace PUTM_CAN
 
     public:
         CAN() = default;
-        int8_t connect(const char *ifname = "slcan0");
-        int8_t disconnect();
+        CanState connect(const char *ifname = "slcan0");
+        CanState disconnect();
 
-        int8_t bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
-        int8_t bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
-        int8_t bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+        CanState bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
+        CanState bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+        CanState bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
 
-        int8_t structure_receive_random(can_frame &rx_frame);
-
-        template <typename T>
-        int8_t transmit(T const &tx_frame);
+        CanState structure_receive_random(can_frame &rx_frame);
 
         template <typename T>
-        int8_t receive(T &rx_frame);
+        CanState transmit(T const &tx_frame);
 
         template <typename T>
-        int8_t receive_rtr(T &rx_frame);
+        CanState receive(T &rx_frame);
+
+        template <typename T>
+        CanState receive_rtr(T &rx_frame);
     };
 
 }
@@ -49,11 +62,11 @@ namespace PUTM_CAN
 namespace PUTM_CAN
 {
     template <typename T>
-    int8_t CAN::transmit(T const &tx_frame)
+    CanState CAN::transmit(T const &tx_frame)
     {
         if(can_id<T> == INVALID_CAN_ID)
         {
-            return -1;
+            return CanState::CAN_ID_ERROR;
         }
         struct can_frame frame;
         frame.can_id = can_id<T>;
@@ -61,17 +74,17 @@ namespace PUTM_CAN
         std::memcpy(frame.data, &tx_frame, sizeof(T));
         if (write(private_socket, &frame, sizeof(struct can_frame)) < 0)
         {
-            return -2;
+            return CanState::CAN_WRITE_ERROR;
         }
-        return 0;
+        return CanState::CAN_OK;
     }
 
     template <typename T>
-    int8_t CAN::receive(T &rx_frame)
+    CanState CAN::receive(T &rx_frame)
     {
         if(can_id<T> == INVALID_CAN_ID)
         {
-            return -1;
+            return CanState::CAN_ID_ERROR;
         }
         struct can_frame frame;
         struct can_filter filter
@@ -81,43 +94,44 @@ namespace PUTM_CAN
         };
         if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
         {
-            return -2;
+            return CanState::CAN_MASKING_ERROR;
         }
         if (read(private_socket, &frame, sizeof(struct can_frame)) < sizeof(can_frame))
         {
-            return -3;
+            return CanState::CAN_READ_ERROR;
         }
         std::memcpy(&rx_frame, frame.data, sizeof(T));
-        return 0;
+        
+        return CanState::CAN_OK;
     }
 
     template <typename T>
-    int8_t CAN::receive_rtr(T &rx_frame)
+    CanState CAN::receive_rtr(T &rx_frame)
     {
         if(can_id<T> == INVALID_CAN_ID)
         {
-            return -1;
+            return CanState::CAN_ID_ERROR;
         }
         struct can_frame frame;
         frame.can_id = can_id<T> | CAN_RTR_FLAG;
         if(write(private_socket, &frame, sizeof(struct can_frame)) < 0)
         {
-            return -2;
+            return CanState::CAN_WRITE_ERROR;
         }
-        if(receive(rx_frame)!=0)
+        if(receive(rx_frame)!=CanState::CAN_RECEIVE_ERROR)
         {
-            return -3;
+            return CanState::CAN_RECEIVE_ERROR;
         }
-        return 0;
+        return CanState::CAN_OK;
     }
 
-    int8_t CAN::connect(const char *ifname)
+    CanState CAN::connect(const char *ifname)
     {
         struct ifreq ifr;
         struct sockaddr_can addr;
         if ((private_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW)) == -1)
         {
-            return -1;
+            return CanState::CAN_SOCKET_ERROR;
         }
         strcpy(ifr.ifr_name, ifname);
         ioctl(private_socket, SIOCGIFINDEX, &ifr);
@@ -125,23 +139,23 @@ namespace PUTM_CAN
         addr.can_ifindex = ifr.ifr_ifindex;
         if (bind(private_socket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
         {
-            return -2;
+            return CanState::CAN_BIND_ERROR;
         }
 
-        return 0;
+        return CanState::CAN_OK;
     }
 
-    int8_t CAN::disconnect()
+    CanState CAN::disconnect()
     {
         if (close(private_socket) < 0)
         {
-            return -1;
+            return CanState::CAN_CLOSE_ERROR;
         }
 
-        return 0;
+        return CanState::CAN_OK;
     }
 
-    int8_t CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
+    CanState CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
     {
         struct can_frame frame;
         frame.can_id = can_id;
@@ -151,13 +165,13 @@ namespace PUTM_CAN
 
         if (write(private_socket, &frame, sizeof(struct can_frame)) < 0)
         {
-            return -1;
+            return CanState::CAN_WRITE_ERROR;
         }
 
-        return 0;
+        return CanState::CAN_OK;
     }
 
-    int8_t CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+    CanState CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
     {
         struct can_frame frame;
         struct can_filter filter
@@ -168,44 +182,44 @@ namespace PUTM_CAN
 
         if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
         {
-            return -1;
+            return CanState::CAN_SOCKET_ERROR;
         }
 
         if (read(private_socket, &frame, sizeof(struct can_frame)) < sizeof(can_frame))
         {
-            return -2;
+            return CanState::CAN_READ_ERROR;
         }
 
         std::memcpy(rx_data, frame.data, can_dlc);
 
-        return 0;
+        return CanState::CAN_OK;
     }
 
-    int8_t CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+    CanState CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
     {
         struct can_frame frame;
         frame.can_id = can_id | CAN_RTR_FLAG;
 
         if (write(private_socket, &frame, sizeof(struct can_frame)) < 0)
         {
-            return -1;
+            return CanState::CAN_WRITE_ERROR;
         }
 
-        if (bytes_receive(can_id, can_dlc, rx_data) != 0)
+        if (bytes_receive(can_id, can_dlc, rx_data) != CanState::CAN_OK)
         {
-            return -2;
+            return CanState::CAN_RECEIVE_ERROR;
         }
 
-        return 0;
+        return CanState::CAN_OK;
     }
 
-    int8_t CAN::structure_receive_random(can_frame &rx_frame)
+    CanState CAN::structure_receive_random(can_frame &rx_frame)
     {
         if(read(private_socket, &rx_frame, sizeof(can_frame)) < sizeof(can_frame))
         {
-            return -1;
+            return CanState::CAN_READ_ERROR;
         }
-        return 0;
+        return CanState::CAN_OK;
     }
 
 }
