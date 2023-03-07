@@ -45,6 +45,7 @@ namespace PUTM_CAN
 
 }
 
+
 namespace PUTM_CAN
 {
     template <typename T>
@@ -75,7 +76,8 @@ namespace PUTM_CAN
         struct can_frame frame;
         struct can_filter filter
         {
-            .can_id = can_id<T>, .can_mask = CAN_SFF_MASK
+            can_id<T>,
+            CAN_SFF_MASK
         };
         if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
         {
@@ -160,8 +162,8 @@ namespace PUTM_CAN
         struct can_frame frame;
         struct can_filter filter
         {
-            .can_id = can_id,
-            .can_mask = CAN_SFF_MASK
+            can_id,
+            CAN_SFF_MASK
         };
 
         if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
