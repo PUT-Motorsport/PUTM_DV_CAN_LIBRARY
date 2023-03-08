@@ -23,7 +23,6 @@ namespace PUTM_CAN
         CAN_SOCKET_ERROR,
         CAN_BIND_ERROR,
         CAN_MASKING_ERROR,
-        CAN_ID_ERROR,
         CAN_WRITE_ERROR,
         CAN_READ_ERROR,
         CAN_RECEIVE_ERROR,
