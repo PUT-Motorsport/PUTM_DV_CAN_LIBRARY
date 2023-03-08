@@ -64,10 +64,8 @@ namespace PUTM_CAN
     template <typename T>
     CanState CAN::transmit(T const &tx_frame)
     {
-        if(can_id<T> == INVALID_CAN_ID)
-        {
-            return CanState::CAN_ID_ERROR;
-        }
+        static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
+        
         struct can_frame frame;
         frame.can_id = can_id<T>;
         frame.can_dlc = sizeof(T);
@@ -82,10 +80,8 @@ namespace PUTM_CAN
     template <typename T>
     CanState CAN::receive(T &rx_frame)
     {
-        if(can_id<T> == INVALID_CAN_ID)
-        {
-            return CanState::CAN_ID_ERROR;
-        }
+        static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
+        
         struct can_frame frame;
         struct can_filter filter
         {
@@ -108,10 +104,8 @@ namespace PUTM_CAN
     template <typename T>
     CanState CAN::receive_rtr(T &rx_frame)
     {
-        if(can_id<T> == INVALID_CAN_ID)
-        {
-            return CanState::CAN_ID_ERROR;
-        }
+        static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
+        
         struct can_frame frame;
         frame.can_id = can_id<T> | CAN_RTR_FLAG;
         if(write(private_socket, &frame, sizeof(struct can_frame)) < 0)
