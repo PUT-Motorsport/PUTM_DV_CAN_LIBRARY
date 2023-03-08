@@ -17,7 +17,7 @@
 
 namespace PUTM_CAN
 {
-    enum class CanState
+    enum class CanState : uint8_t
     {
         CAN_OK,
         CAN_SOCKET_ERROR,
