@@ -1,5 +1,4 @@
-#ifndef PUTM_CAN_INTERFACE
-#define PUTM_CAN_INTERFACE
+#pragma once
 
 #include <string>
 #include "putm_can_id_templates.hpp"
@@ -35,24 +34,24 @@ namespace PUTM_CAN
         int private_socket;
 
     public:
-        CAN() = default;
-        CanState connect(const char *ifname = "slcan0");
-        CanState disconnect();
+        inline CAN() = default;
+        inline CanState connect(const char *ifname = "slcan0");
+        inline CanState disconnect();
 
-        CanState bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
-        CanState bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
-        CanState bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+        inline CanState bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
+        inline CanState bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+        inline CanState bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
 
-        CanState structure_receive_random(can_frame &rx_frame);
-
-        template <typename T>
-        CanState transmit(T const &tx_frame);
+        inline CanState structure_receive_random(can_frame &rx_frame);
 
         template <typename T>
-        CanState receive(T &rx_frame);
+        inline CanState transmit(T const &tx_frame);
 
         template <typename T>
-        CanState receive_rtr(T &rx_frame);
+        inline CanState receive(T &rx_frame);
+
+        template <typename T>
+        inline CanState receive_rtr(T &rx_frame);
     };
 
 }
@@ -61,7 +60,7 @@ namespace PUTM_CAN
 namespace PUTM_CAN
 {
     template <typename T>
-    CanState CAN::transmit(T const &tx_frame)
+    inline CanState CAN::transmit(T const &tx_frame)
     {
         static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
         
@@ -77,7 +76,7 @@ namespace PUTM_CAN
     }
 
     template <typename T>
-    CanState CAN::receive(T &rx_frame)
+    inline CanState CAN::receive(T &rx_frame)
     {
         static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
         
@@ -101,7 +100,7 @@ namespace PUTM_CAN
     }
 
     template <typename T>
-    CanState CAN::receive_rtr(T &rx_frame)
+    inline CanState CAN::receive_rtr(T &rx_frame)
     {
         static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
         
@@ -118,7 +117,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    CanState CAN::connect(const char *ifname)
+    inline CanState CAN::connect(const char *ifname)
     {
         struct ifreq ifr;
         struct sockaddr_can addr;
@@ -138,7 +137,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    CanState CAN::disconnect()
+    inline CanState CAN::disconnect()
     {
         if (close(private_socket) < 0)
         {
@@ -148,7 +147,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    CanState CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
+    inline CanState CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
     {
         struct can_frame frame;
         frame.can_id = can_id;
@@ -164,7 +163,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    CanState CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+    inline CanState CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
     {
         struct can_frame frame;
         struct can_filter filter
@@ -188,7 +187,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    CanState CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+    inline CanState CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
     {
         struct can_frame frame;
         frame.can_id = can_id | CAN_RTR_FLAG;
@@ -206,7 +205,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    CanState CAN::structure_receive_random(can_frame &rx_frame)
+    inline CanState CAN::structure_receive_random(can_frame &rx_frame)
     {
         if(read(private_socket, &rx_frame, sizeof(can_frame)) < sizeof(can_frame))
         {
@@ -216,5 +215,3 @@ namespace PUTM_CAN
     }
 
 }
-
-#endif // PUTM_CAN_INTERFACE
