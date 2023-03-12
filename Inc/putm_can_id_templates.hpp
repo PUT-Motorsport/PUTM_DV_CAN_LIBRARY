@@ -1,5 +1,4 @@
-#ifndef PUTM_CAN_ID_TEMPLATE
-#define PUTM_CAN_ID_TEMPLATE
+#pragma once
 
 #include "CanHeaders/PM08-CANBUS-APPS.hpp"
 #include "CanHeaders/PM08-CANBUS-AQ_CARD.hpp"
@@ -163,6 +162,3 @@ namespace PUTM_CAN
 
 
 }
-
-
-#endif //PUTM_CAN_ID_TEMPLATE
