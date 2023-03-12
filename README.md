@@ -7,11 +7,11 @@ Create a CAN instance and trigger the connect() method:
 CAN can;
 can.connect();
 ```
-Create a structure instance:
+Create a frame instance:
 ```cpp
 Apps_main apps_frame;
 ```
-Assign values to the structure:
+Assign values:
 ```cpp
 apps_frame = {
     .pedal_position = 1,
@@ -22,13 +22,17 @@ apps_frame = {
 ```
 Transmit data:
 ```cpp
-can.transmit(apps_frame);
+can.transmit(apps_frame, NO_TIMEOUT);
 ```
 Receive data:
 ```cpp
-can.receive(apps_frame);
+can.receive(apps_frame, NO_TIMEOUT);
 ```
 Transmit remote request and receive data:
 ```cpp
-can.receive_rtr(apps_frame);
+can.receive_rtr(apps_frame, NO_TIMEOUT);
+```
+Receive with 5 seconds timeout:
+```cpp
+can.receive(apps_frame, 5);
 ```
