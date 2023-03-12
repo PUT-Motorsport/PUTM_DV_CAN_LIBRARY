@@ -15,6 +15,7 @@
 #include "CanHeaders/PM08-CANBUS-TELEMETRY.hpp"
 #include "CanHeaders/PM08-CANBUS-WHEELTEMP.hpp"
 #include "CanHeaders/PM08-CANBUS-YAWPROBE.hpp"
+#include "CanHeaders/PM08-CANBUS-ODRIVE.hpp"
 
 namespace PUTM_CAN
 {
@@ -109,6 +110,58 @@ namespace PUTM_CAN
 
     template <>
     constexpr uint16_t can_id<YawProbe_air_flow> = YAWPROBE_AIR_FLOW_CAN_ID;
+
+    template <>
+    constexpr uint16_t can_id <Odrive_Heartbeat> = ODRIVE_HEARTBEAT_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Estop> = ODRIVE_ESTOP_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Get_Error> = ODRIVE_GET_ERROR_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Axis_Node_ID> = ODRIVE_SET_AXIS_NODE_ID_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Axis_State> = ODRIVE_SET_AXIS_STATE_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Get_Encoder_Estimation> = ODRIVE_GET_ENCODER_ESTIMATION_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Get_Encoder_Count> = ODRIVE_GET_ENCODER_COUNT_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Controller_Mode> = ODRIVE_SET_CONTROLLER_MODE_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Input_Position> = ODRIVE_SET_INPUT_POSITION_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Input_Vel> = ODRIVE_SET_INPUT_VEL_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Input_Torque> = ODRIVE_SET_INPUT_TORQUE_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Limits> = ODRIVE_SET_LIMITS_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Start_Anticogging> = ODRIVE_START_ANTICOGGING_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Traj_Vel_Limit> = ODRIVE_SET_TRAJ_VEL_LIMIT_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Traj_Accel_Limits> = ODRIVE_SET_TRAJ_ACCEL_LIMITS_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Traj_Inertia> = ODRIVE_SET_TRAJ_INERTIA_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Get_Iq> = ODRIVE_GET_IQ_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Get_Temperature> = ODRIVE_GET_TEMPERATURE_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Reboot> = ODRIVE_REBOOT_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Get_Vbus_Voltage_Current> = ODRIVE_GET_VBUS_VOLTAGE_CURRENT_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Clear_Errors> = ODRIVE_CLEAR_ERRORS_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Absolute_Position> = ODRIVE_SET_ABSOLUTE_POSITION_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Pos_Gain> = ODRIVE_SET_POS_GAIN_CAN_ID;
+    template <>
+    constexpr uint16_t can_id <Odrive_Set_Vel_gains> = ODRIVE_SET_VEL_GAINS_CAN_ID;
+
+
+
 }
 
 
