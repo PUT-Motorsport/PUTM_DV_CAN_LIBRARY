@@ -9,7 +9,7 @@ namespace PUTM_CAN{
 	};
 
 	struct __attribute__ ((packed)) Odrive_Heartbeat{
-		uint32_t Axis_Error;//Axis error
+		float Axis_Error;//Axis error
 		uint8_t Axis_State;//Axis State
 	};
 
@@ -17,101 +17,101 @@ namespace PUTM_CAN{
 	};
 
 	struct __attribute__ ((packed)) Odrive_Get_Error{
-		uint32_t Active_Errors;
-		uint32_t Disarm_Reason;
+		float Active_Errors;
+		float Disarm_Reason;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Axis_Node_ID{
-		uint32_t Axis_Node_ID;
+		float Axis_Node_ID;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Axis_State{
-		uint32_t Axis_Requested_State;
+		float Axis_Requested_State;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Get_Encoder_Estimation{
-		uint32_t Pos_Estimate;
-		uint32_t Vel_Estimate;
+		float Pos_Estimate;
+		float Vel_Estimate;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Get_Encoder_Count{
-		uint32_t Shadow_Count;
-		uint32_t Count_in_CPR;
+		float Shadow_Count;
+		float Count_in_CPR;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Controller_Mode{
-		uint32_t Control_Mode;
-		uint32_t Input_Mode;
+		float Control_Mode;
+		float Input_Mode;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Input_Position{
-		uint32_t Input_Pos;
-		uint16_t Vel_FF;
-		uint16_t Torque_FF;
+		float Input_Pos;
+		int16_t Vel_FF;
+		int16_t Torque_FF;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Input_Vel{
-		uint32_t Input_Vel;
-		uint32_t Input_Torque_FF;
+		float Input_Vel;
+		float Input_Torque_FF;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Input_Torque{
-		uint32_t Input_Torque;
+		float Input_Torque;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Limits{
-		uint32_t Velocity_Limit;
-		uint32_t Current_Limit;
+		float Velocity_Limit;
+		float Current_Limit;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Start_Anticogging{
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Traj_Vel_Limit{
-		uint32_t Traj_Vel_Limit;
+		float Traj_Vel_Limit;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Traj_Accel_Limits{
-		uint32_t Traj_Accel_Limit;
-		uint32_t Traj_Decel_Limit;
+		float Traj_Accel_Limit;
+		float Traj_Decel_Limit;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Traj_Inertia{
-		uint32_t Traj_Inertia;
+		float Traj_Inertia;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Get_Iq{
-		uint32_t Iq_Setpoint;
-		uint32_t Iq_Measured;
+		float Iq_Setpoint;
+		float Iq_Measured;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Get_Temperature{
-		uint32_t FET_Temperature;
-		uint32_t Motor_Temperature;
+		float FET_Temperature;
+		float Motor_Temperature;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Reboot{
 	};
 
 	struct __attribute__ ((packed)) Odrive_Get_Vbus_Voltage_Current{
-		uint32_t Vbus_Voltage;
-		uint32_t Vbus_Current;
+		float Vbus_Voltage;
+		float Vbus_Current;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Clear_Errors{
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Absolute_Position{
-		uint32_t Position;
+		float Position;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Pos_Gain{
-		uint32_t Pos_Gain;
+		float Pos_Gain;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Vel_gains{
-		uint32_t Vel_Gain;
-		uint32_t Vel_Integrator_Gain;
+		float Vel_Gain;
+		float Vel_Integrator_Gain;
 	};
 
 
