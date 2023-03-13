@@ -40,8 +40,8 @@ namespace PUTM_CAN{
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Controller_Mode{
-		float Control_Mode;
-		float Input_Mode;
+		int32_t Control_Mode;
+		int32_t Input_Mode;
 	};
 
 	struct __attribute__ ((packed)) Odrive_Set_Input_Position{
