@@ -41,14 +41,14 @@ namespace PUTM_CAN
         inline CanState connect(const char *ifname = "slcan0");
         inline CanState disconnect();
 
-        inline CanState structure_receive_random(can_frame &rx_frame, time_t timeout_in_seconds);
+        inline CanState structure_receive_random(can_frame &rx_frame, const time_t timeout_in_seconds);
 
         template <typename T>
         inline CanState transmit(T const &tx_frame);
         template <typename T>
-        inline CanState receive(T &rx_frame, time_t timeout_in_seconds);
+        inline CanState receive(T &rx_frame, const time_t timeout_in_seconds);
         template <typename T>
-        inline CanState receive_rtr(T &rx_frame, time_t timeout_in_seconds);
+        inline CanState receive_rtr(T &rx_frame, const time_t timeout_in_seconds);
 
         inline CanState bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
         inline CanState bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
@@ -76,7 +76,7 @@ namespace PUTM_CAN
     }
 
     template <typename T>
-    inline CanState CAN::receive(T &rx_frame, time_t timeout_in_seconds)
+    inline CanState CAN::receive(T &rx_frame, const time_t timeout_in_seconds)
     {
         static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
 
@@ -104,7 +104,7 @@ namespace PUTM_CAN
     }
 
     template <typename T>
-    inline CanState CAN::receive_rtr(T &rx_frame, time_t timeout_in_seconds)
+    inline CanState CAN::receive_rtr(T &rx_frame, const time_t timeout_in_seconds)
     {
         static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
 
@@ -149,7 +149,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    inline CanState CAN::structure_receive_random(can_frame &rx_frame, time_t timeout_in_seconds)
+    inline CanState CAN::structure_receive_random(can_frame &rx_frame, const time_t timeout_in_seconds)
     {
         timeval tv = {timeout_in_seconds, 0};
         if (setsockopt(private_socket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof tv) != 0)
