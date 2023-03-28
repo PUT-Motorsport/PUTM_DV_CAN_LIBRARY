@@ -22,7 +22,7 @@ apps_frame = {
 ```
 Transmit data:
 ```cpp
-can.transmit(apps_frame, NO_TIMEOUT);
+can.transmit(apps_frame);
 ```
 Receive data:
 ```cpp
