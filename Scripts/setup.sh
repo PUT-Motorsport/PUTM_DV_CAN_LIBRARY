@@ -4,6 +4,7 @@
 CAN_VENDOR_ID="0483"
 CAN_MODEL_ID="5740"
 CAN_TTY_PATH=""
+IF_NAME="slcan1"
 
 
 for TTY in /dev/ttyACM* ; do
@@ -27,11 +28,11 @@ else
     modprobe slcan
     
     #link serial interface with a virtual CAN device
-    slcand -s8 -o $CAN_TTY_PATH slcan0 
+    slcand -s8 -o $CAN_TTY_PATH $IF_NAME
     sleep 1
     
     #bring network interface up
-    ifconfig slcan0 up && echo "[CANscript] slcan0 is up and running"
+    ifconfig $IF_NAME up && echo "[CANscript] $IF_NAME is up and running"
     exit 0
 fi
 
