@@ -98,6 +98,8 @@ namespace PUTM_CAN
         {
             return CanState::CAN_READ_ERROR;
         }
+
+        std::cout << frame.can_id <<"vs"<< can_id<T> << std::endl;
         std::memcpy(&rx_frame, frame.data, sizeof(T));
 
         return CanState::CAN_OK;

@@ -4,7 +4,7 @@
 CAN_VENDOR_ID="0483"
 CAN_MODEL_ID="5740"
 CAN_TTY_PATH=""
-IF_NAME="slcan1"
+IF_NAME="slcan0"
 
 
 for TTY in /dev/ttyACM* ; do
