@@ -34,9 +34,6 @@ namespace PUTM_CAN
 
     class CAN
     {
-    private:
-        int private_socket;
-
     public:
         inline CAN() = default;
 
@@ -55,6 +52,9 @@ namespace PUTM_CAN
         inline CanState bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
         inline CanState bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
         inline CanState bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+
+    private:
+        int private_socket;
     };
 
 }
@@ -130,7 +130,7 @@ namespace PUTM_CAN
             return CanState::CAN_SOCKET_ERROR;
         }
         std::strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
-        if(ioctl(private_socket, SIOCGIFINDEX, &ifr) == -1)
+        if (ioctl(private_socket, SIOCGIFINDEX, &ifr) == -1)
         {
             return CanState::CAN_IOCTL_ERROR;
         }
