@@ -7,7 +7,7 @@ int main()
 {
     /* CONNECT TO THE CAN INTERFACE */
     CAN can;
-    if (can.connect("can0") != CanState::CAN_OK)
+    if (can.connect("slcan0") != CanState::CAN_OK)
     {
         std::cout << "Error" << std::endl;
         return 1;
