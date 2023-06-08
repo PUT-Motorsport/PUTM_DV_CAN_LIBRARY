@@ -125,7 +125,8 @@ namespace PUTM_CAN
     {
         ifreq ifr;
         sockaddr_can addr;
-        if ((private_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW)) == -1)
+        private_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+        if (private_socket == -1)
         {
             return CanState::CAN_SOCKET_ERROR;
         }
