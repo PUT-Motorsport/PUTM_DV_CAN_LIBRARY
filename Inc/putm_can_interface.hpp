@@ -69,7 +69,7 @@ namespace PUTM_CAN
         can_frame frame;
         frame.can_id = can_id<T>;
         frame.len = sizeof(T);
-        std::memcpy(frame.data, &tx_frame, sizeof(T));
+        (void)std::memcpy(frame.data, &tx_frame, sizeof(T));
         if (write(private_socket, &frame, sizeof(can_frame)) < 0)
         {
             return CanState::CAN_WRITE_ERROR;
@@ -100,7 +100,7 @@ namespace PUTM_CAN
         {
             return CanState::CAN_READ_ERROR;
         }
-        std::memcpy(&rx_frame, frame.data, sizeof(T));
+        (void)std::memcpy(&rx_frame, frame.data, sizeof(T));
 
         return CanState::CAN_OK;
     }
@@ -175,7 +175,7 @@ namespace PUTM_CAN
         frame.can_id = can_id;
         frame.len = len;
 
-        std::memcpy(frame.data, tx_data, len);
+        (void)std::memcpy(frame.data, tx_data, len);
 
         if (write(private_socket, &frame, sizeof(can_frame)) < 0)
         {
@@ -200,7 +200,7 @@ namespace PUTM_CAN
             return CanState::CAN_READ_ERROR;
         }
 
-        std::memcpy(rx_data, frame.data, len);
+        (void)std::memcpy(rx_data, frame.data, len);
 
         return CanState::CAN_OK;
     }

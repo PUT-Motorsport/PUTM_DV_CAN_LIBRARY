@@ -18,7 +18,7 @@
 
 namespace PUTM_CAN
 {
-    constexpr uint16_t INVALID_CAN_ID = 0xFFFF;
+    constexpr uint16_t INVALID_CAN_ID = 0xFFFFU;
 
     template <typename T>
     constexpr uint16_t can_id = INVALID_CAN_ID;
