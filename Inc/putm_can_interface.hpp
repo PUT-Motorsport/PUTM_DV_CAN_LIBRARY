@@ -40,7 +40,7 @@ namespace PUTM_CAN
     public:
         inline CAN() = default;
 
-        inline CanState connect(const char *ifname = "slcan0");
+        inline CanState connect(const char *ifname);
         inline CanState disconnect();
 
         inline CanState structure_receive_random(can_frame &rx_frame, const time_t timeout_in_seconds);
