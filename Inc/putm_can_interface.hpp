@@ -130,7 +130,7 @@ namespace PUTM_CAN
         {
             return CanState::CAN_SOCKET_ERROR;
         }
-        std::strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
+        (void)std::strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
         if (ioctl(private_socket, SIOCGIFINDEX, &ifr) == -1)
         {
             return CanState::CAN_IOCTL_ERROR;
