@@ -49,9 +49,9 @@ namespace PUTM_CAN
         template <typename T>
         inline CanState receive_rtr(T &rx_frame, const time_t timeout_in_seconds);
 
-        inline CanState bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data);
-        inline CanState bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
-        inline CanState bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data);
+        inline CanState bytes_transmit(const uint16_t &can_id, const uint8_t &len, const char *tx_data);
+        inline CanState bytes_receive(const uint16_t &can_id, const uint8_t &len, char *rx_data);
+        inline CanState bytes_receive_rtr(const uint16_t &can_id, const uint8_t &len, char *rx_data);
 
     private:
         int private_socket;
@@ -68,7 +68,7 @@ namespace PUTM_CAN
 
         can_frame frame;
         frame.can_id = can_id<T>;
-        frame.can_dlc = sizeof(T);
+        frame.len = sizeof(T);
         std::memcpy(frame.data, &tx_frame, sizeof(T));
         if (write(private_socket, &frame, sizeof(can_frame)) < 0)
         {
@@ -169,13 +169,13 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    inline CanState CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &can_dlc, const char *tx_data)
+    inline CanState CAN::bytes_transmit(const uint16_t &can_id, const uint8_t &len, const char *tx_data)
     {
         can_frame frame;
         frame.can_id = can_id;
-        frame.can_dlc = can_dlc;
+        frame.len = len;
 
-        std::memcpy(frame.data, tx_data, can_dlc);
+        std::memcpy(frame.data, tx_data, len);
 
         if (write(private_socket, &frame, sizeof(can_frame)) < 0)
         {
@@ -185,7 +185,7 @@ namespace PUTM_CAN
         return CanState::CAN_OK;
     }
 
-    inline CanState CAN::bytes_receive(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+    inline CanState CAN::bytes_receive(const uint16_t &can_id, const uint8_t &len, char *rx_data)
     {
         can_frame frame;
         can_filter filter = {can_id, CAN_SFF_MASK};
@@ -200,12 +200,12 @@ namespace PUTM_CAN
             return CanState::CAN_READ_ERROR;
         }
 
-        std::memcpy(rx_data, frame.data, can_dlc);
+        std::memcpy(rx_data, frame.data, len);
 
         return CanState::CAN_OK;
     }
 
-    inline CanState CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &can_dlc, char *rx_data)
+    inline CanState CAN::bytes_receive_rtr(const uint16_t &can_id, const uint8_t &len, char *rx_data)
     {
         can_frame frame;
         frame.can_id = can_id | CAN_RTR_FLAG;
@@ -215,6 +215,6 @@ namespace PUTM_CAN
             return CanState::CAN_WRITE_ERROR;
         }
 
-        return bytes_receive(can_id, can_dlc, rx_data);
+        return bytes_receive(can_id, len, rx_data);
     }
 }
