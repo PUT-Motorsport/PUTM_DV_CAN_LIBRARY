@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
-#include "putm_can_id_templates.hpp"
+#include <cstring>
+#include <iostream>
 
 #include <net/if.h>
 #include <sys/types.h>
@@ -12,7 +12,8 @@
 #include <string.h>
 #include <cstring>
 #include <linux/can/raw.h>
-#include <iostream>
+
+#include "putm_can_id_templates.hpp"
 
 namespace PUTM_CAN
 {
@@ -23,6 +24,7 @@ namespace PUTM_CAN
         CAN_OK,
         CAN_SOCKET_ERROR,
         CAN_BIND_ERROR,
+        CAN_IOCTL_ERROR,
         CAN_SET_MASK_ERROR,
         CAN_SET_TIMEOUT_ERROR,
         CAN_WRITE_ERROR,
@@ -128,7 +130,10 @@ namespace PUTM_CAN
             return CanState::CAN_SOCKET_ERROR;
         }
         strcpy(ifr.ifr_name, ifname);
-        ioctl(private_socket, SIOCGIFINDEX, &ifr);
+        if(ioctl(private_socket, SIOCGIFINDEX, &ifr) == -1)
+        {
+            return CanState::CAN_IOCTL_ERROR;
+        }
         addr.can_family = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex;
         if (bind(private_socket, (sockaddr *)&addr, sizeof(addr)) == -1)
