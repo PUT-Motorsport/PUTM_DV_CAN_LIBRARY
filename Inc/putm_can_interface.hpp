@@ -83,7 +83,7 @@ namespace PUTM_CAN
         static_assert(can_id<T> != INVALID_CAN_ID, "Can id has not been specified");
 
         can_frame frame;
-        can_filter filter = {can_id<T>, CAN_SFF_MASK};
+        can_filter filter = {can_id<T>, (CAN_SFF_MASK | CAN_EFF_FLAG | CAN_RTR_FLAG)};
 
         timeval tv = {timeout_in_seconds, 0};
         if (setsockopt(private_socket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof tv) != 0)
@@ -189,7 +189,7 @@ namespace PUTM_CAN
     inline CanState CAN::bytes_receive(const uint16_t &can_id, const uint8_t &len, char *rx_data)
     {
         can_frame frame;
-        can_filter filter = {can_id, CAN_SFF_MASK};
+        can_filter filter = {can_id, (CAN_SFF_MASK | CAN_EFF_FLAG | CAN_RTR_FLAG)};
 
         if (setsockopt(private_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) != 0)
         {
